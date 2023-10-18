@@ -143,14 +143,18 @@ contract Service is AccessControl {
         return Data(DataAddress).getIDNumberByAddress(_userAddress);
     }
 
-    function getIDMetadataByAddress(address _userAddress) public view onlyEmployee returns (Data.idMetadata memory) {
+    function getIDMetadataByAddress(
+        address _userAddress
+    ) public view onlyEmployee returns (Data.idMetadata memory) {
         if (!Data(DataAddress).addressHasIdAssigned(_userAddress)) {
             revert Service__IDDontExist();
         }
         return Data(DataAddress).getIDMetadataByAddress(_userAddress);
     }
 
-    function getIDMetadataByNumberID(uint256 _numberID) public view onlyEmployee returns (Data.idMetadata memory) {
+    function getIDMetadataByNumberID(
+        uint256 _numberID
+    ) public view onlyEmployee returns (Data.idMetadata memory) {
         if (!Data(DataAddress).idNumberExist(_numberID)) {
             revert Service__IDDontExist();
         }

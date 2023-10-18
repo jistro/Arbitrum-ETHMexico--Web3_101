@@ -5,7 +5,7 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol"
 
 contract Data is AccessControl {
 
-    error Data__OnlyAdmin();
+    error Data__OnlyAdmin(address);
     error Data__OnlyDataProvider();
     error Data__IDAlreadyExist();
     error Data__IDDoesNotExist();
@@ -52,14 +52,13 @@ contract Data is AccessControl {
         uint256 date
     );
 
-    constructor( address _adminAddress, address _dataProviderAddress) {
+    constructor( address _adminAddress) {
         _grantRole(ADMIN_ROLE, _adminAddress);
-        _grantRole(DATA_PROVIDER_ROLE, _dataProviderAddress);
     }
 
     modifier onlyAdmin() {
         if (!hasRole(ADMIN_ROLE, msg.sender)) {
-            revert Data__OnlyAdmin();
+            revert Data__OnlyAdmin(msg.sender);
         }
         _;
     }
