@@ -14,7 +14,12 @@ contract DeploySystemScript is Script {
     function run() public {
         vm.startBroadcast(adminAddress);
         data = new Data(adminAddress);
-        service = new Service(address(data), adminAddress);
+        service = new Service(
+            address(data), 
+            adminAddress,
+            "Cosme",
+            "Fulanito de Tal"
+            );
         data.grantAdminRole(address(service));
         data.grantDataProviderRole(address(service));
         console2.log("Data address: ", address(data));

@@ -34,9 +34,23 @@ contract Service is AccessControl {
 
     mapping (address employeeAddress => EmployeeMetadata metadata) employee;
 
-    constructor(address _DataAddress, address _adminAddress) {
+    constructor(
+        address _DataAddress, 
+        address _adminAddress,
+        string memory _firstNameAdmin,
+        string memory _lastNameAdmin
+    ) {
         DataAddress = _DataAddress;
         _grantRole(ADMIN_ROLE, _adminAddress);
+        numberEmployee++;
+        employee[_adminAddress] = EmployeeMetadata(
+            _firstNameAdmin,
+            _lastNameAdmin,
+            numberEmployee,
+            1,
+            block.timestamp,
+            0
+        );
     }
 
     modifier onlyAdmin() {
