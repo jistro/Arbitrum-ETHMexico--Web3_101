@@ -12,8 +12,10 @@ contract Service is AccessControl {
     error Service__RoleNotValid();
     error Service__CantRemoveYourself();
     error Service__EmployeeAlreadyEgress();
+    error Service__EmployeeIsStillActive();
     error Service__IDDontExist();
     error Service__AddressDoesntHaveIDAssigned();
+    
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant MANAGER_EMPLOYEE_ROLE = keccak256("MANAGER_EMPLOYEE_ROLE");
@@ -79,7 +81,7 @@ contract Service is AccessControl {
         string memory _firstName,
         string memory _lastName,
         uint8 _role
-    ) public onlyManagerEmployee returns (uint256) {
+    ) public onlyAdmin returns (uint256) {
         if (employee[_employeeAddress].idEmployee != 0) {
             revert Service__EmployeeExist();
         }
@@ -122,6 +124,24 @@ contract Service is AccessControl {
             _revokeRole(GENERAL_EMPLOYEE_ROLE, _employeeAddress);
         }
         employee[_employeeAddress].egressDate = block.timestamp;
+    }
+
+    function reinstateEmployee(address _employeeAddress) public onlyAdmin {
+        if (employee[_employeeAddress].idEmployee == 0) {
+            revert Service__EmployeeNotExist();
+        }
+        if (employee[_employeeAddress].egressDate == 0) {
+            revert Service__EmployeeIsStillActive();
+        }
+        if (employee[_employeeAddress].role == 1) {
+            _grantRole(ADMIN_ROLE, _employeeAddress);
+        } else if (employee[_employeeAddress].role == 2) {
+            _grantRole(MANAGER_EMPLOYEE_ROLE, _employeeAddress);
+        } else if (employee[_employeeAddress].role == 3) {
+            _grantRole(GENERAL_EMPLOYEE_ROLE, _employeeAddress);
+        }
+        employee[_employeeAddress].egressDate = 0;
+        employee[_employeeAddress].ingressDate = block.timestamp;
     }
 
     function getEmployee(address _employeeAddress) public view onlyAdmin returns (EmployeeMetadata memory) {

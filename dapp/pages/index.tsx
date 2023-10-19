@@ -1,14 +1,29 @@
 'use client';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Divider,
+  Input,
+  Button,
+  ButtonGroup,
+  Select,
+  Box,
+  AbsoluteCenter,
+  Center
+} from '@chakra-ui/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { readContract } from '@wagmi/core'
-import { useAccount } from 'wagmi';
+import { readContract, prepareWriteContract, writeContract } from '@wagmi/core'
+import { useAccount} from 'wagmi';
 import { useEffect, useState } from 'react';
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 import Data from '../abi/Data.json';
 import Service from '../abi/Service.json';
+
 
 const addressData = process.env.NEXT_PUBLIC_DATA_SC;
 const addressService = process.env.NEXT_PUBLIC_SERVICE_SC;
@@ -20,11 +35,42 @@ function formatUnixEpochTime(unixEpochTime: number | bigint): string {
   return formattedDate;
 }
 
+function formatEmployeeData(data: any) {
+  const formattedData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+    ingressDate: data.ingressDate,
+    egressDate: data.egressDate,
+  }
+  return (
+    <>
+      <p>
+        <strong>Name:</strong> {formattedData.firstName} {formattedData.lastName}
+      </p>
+      <p>
+        <strong>Role:</strong> {
+          formattedData.role === 1 ? 'Admin' : formattedData.role === 2 ? 'Manager' : 'Employee'
+        }
+        <p>
+          {formattedData.egressDate != 0 ?
+            `Egress Date:${formatUnixEpochTime(formattedData.egressDate)}`
+            :
+            `Ingress Date:${formatUnixEpochTime(formattedData.ingressDate)}`
+          }
+        </p>
+      </p>
+    </>
+  )
+}
+
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
   const [isClient, setIsClient] = useState(false);
   const [employee, setEmployee] = useState<any>(null);
+  const [metadataFindEmployee, setMetadataFindEmployee] = useState<any>(null);
+  const [txData, setTxData] = useState<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -48,6 +94,59 @@ const Home: NextPage = () => {
     }
   }, [isConnected, address]);
 
+  const registerEmployee = () => {
+    const inputIds = [
+      'newEmployee__address',
+      'newEmployee__firstName',
+      'newEmployee__lastName',
+      'newEmployee__role',
+    ];
+    const inputs = inputIds.map((id) => document.getElementById(id) as HTMLInputElement);
+    const addressEmployee = inputs[0].value;
+    const firstName = inputs[1].value;
+    const lastName = inputs[2].value;
+    const role = inputs[3].value;
+    if (inputs.some((input) => input.value === '')) {
+      alert('Fill all inputs');
+    }
+
+    prepareWriteContract({
+      address: addressService as '0x${string}',
+      abi: Service.abi,
+      functionName: 'newEmployee',
+      args: [addressEmployee, firstName, lastName, parseInt(role)],
+      account: address,
+    }).then((data) => {
+      
+      writeContract(data).then(() => {
+        setTxData(['Adm1', data.result]);
+        console.log(data);
+      });
+    });
+      
+  }
+
+  const findEmployee = () => {
+    const inputIds = [
+      'findEmployee__address',
+    ];
+    const inputs = inputIds.map((id) => document.getElementById(id) as HTMLInputElement);
+    const addressFind = inputs[0].value;
+    if (addressFind === '') {
+      alert('Address is empty');
+    }
+
+    readContract({
+      address: addressService as '0x${string}',
+      abi: Service.abi,
+      functionName: 'getEmployee',
+      args: [addressFind],
+      account: address,
+    }).then((data) => {
+      setMetadataFindEmployee(data);
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -59,39 +158,139 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className={styles.main}>
+      <header className={styles.header}>
         <ConnectButton />
+      </header>
+
+      <main className={styles.main}>
         {isClient && (
           <>
-            {isConnected ? (
-              <>
-                <div>
-                  {employee && (
-                    <>
+            {isConnected && employee ? (
+              <div>
+                {employee.firstName ? (
+                  <Card>
+                    <CardBody>
+                      {formatEmployeeData(employee)}
+                    </CardBody>
+                  </Card>
+                ) : (
+                  <Card>
+                    <CardBody
+                      color={'red'}
+                    >
                       <p>
-                        <strong>Name:</strong> {employee.firstName} {employee.lastName}
+                        You are not registered as an employee.
                       </p>
-                      <p>
-                        <strong>Role:</strong> {
-                          employee.role === 1 ? 'Admin' : employee.role === 2 ? 'Manager' : 'Employee'
-                        }
+                    </CardBody>
+                  </Card>
+                )}
+                <div
+                  style={{
+                    marginTop: '20px',
+                  }}
+                >
+                  {employee.role === 1 ? (
+                    <Card>
+                      <CardBody>
+                        <Box position='relative' padding='5'>
+                          <Divider />
+                          <AbsoluteCenter bg='white' px='4'>
+                            Register new employee
+                          </AbsoluteCenter>
+                        </Box>
+                        <Input size='sm' type="text" placeholder="Address" id="newEmployee__address" />
+                        <Input size='sm' type="text" placeholder="First Name" id="newEmployee__firstName" />
+                        <Input size='sm' type="text" placeholder="Last Name" id="newEmployee__lastName" />
+                        <Select size='sm' id="newEmployee__role">
+                          <option value="0">Select Role</option>
+                          <option value="1">Admin</option>
+                          <option value="2">Manager</option>
+                          <option value="3">Employee</option>
+                        </Select>
+                        <Box position='relative' paddingTop={2}>
+                          <Button size='sm' colorScheme='blue' onClick={registerEmployee}>Register</Button>
+                        </Box>
+                        <Box position='relative' padding='5'>
+                          <Divider />
+                          <AbsoluteCenter bg='white' px='4'>
+                            Offboard employee
+                          </AbsoluteCenter>
+                        </Box>
+                        <Input size='sm' type="text" placeholder="Address" id="offboardEmployee__address" />
+                        <Box position='relative' paddingTop={2}>
+                          <Button size='sm' colorScheme='red'>Offboard</Button>
+                        </Box>
+
+                        <Box position='relative' padding='5'>
+                          <Divider />
+                          <AbsoluteCenter bg='white' px='4'>
+                            Reinstate employee
+                          </AbsoluteCenter>
+                        </Box>
+                        <Input size='sm' type="text" placeholder="Address" id="reinstateEmployee__address" />
+                        <Select size='sm' id="reinstateEmployee__role">
+                          <option value="0">Select Role</option>
+                          <option value="1">Admin</option>
+                          <option value="2">Manager</option>
+                          <option value="3">Employee</option>
+                        </Select>
+                        <Box position='relative' paddingTop={2}>
+                          <Button size='sm' colorScheme='green'>Reinstate</Button>
+                        </Box>
+                        
+                        <Box position='relative' padding='5'>
+                          <Divider />
+                          <AbsoluteCenter bg='white' px='4'>
+                            Find employee
+                          </AbsoluteCenter>
+                        </Box>
+                        <Input size='sm' type="text" placeholder="Address" id="findEmployee__address" />
+                        <Box position='relative' paddingTop={2}>
+                          <Button onClick={findEmployee} size='sm' colorScheme='blue'>Find</Button>
+                        </Box>
+                      </CardBody>
+                    </Card>
+                  ) : employee.role === 2 ? (
+                    <Card>
+                      <CardBody>
                         <p>
-                          {employee.egressDate != 0 ?
-                            `Egress Date:${formatUnixEpochTime(employee.egressDate)}`
-                            :
-                            `Ingress Date:${formatUnixEpochTime(employee.ingressDate)}`
-                          }
+                          <strong>Manager Panel</strong>
                         </p>
-                      </p>
-                    </>
+                        <p>
+                          <strong>Address Data SC:</strong> {addressData}
+                        </p>
+                        <p>
+                          <strong>Address Service SC:</strong> {addressService}
+                        </p>
+                      </CardBody>
+                    </Card>
+                  ) : (
+                    <Card>
+                      <CardBody>
+                        <p>
+                          <strong>Employee Panel</strong>
+                        </p>
+                        <p>
+                          <strong>Address Data SC:</strong> {addressData}
+                        </p>
+                        <p>
+                          <strong>Address Service SC:</strong> {addressService}
+                        </p>
+                      </CardBody>
+                    </Card>
                   )}
                 </div>
-              </>
+              </div>
             ) : (
               <div>
-                <p>
-                  To get started, connect your wallet using the button above.
-                </p>
+                <Card
+                  backgroundColor={'#de6d6d'}
+                  color={'white'}
+                >
+                  <CardBody>
+                    To get started, connect your wallet using the button above.
+                  </CardBody>
+                </Card>
               </div>
             )}
           </>
