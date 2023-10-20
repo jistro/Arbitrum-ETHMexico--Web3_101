@@ -1,4 +1,4 @@
-![Web3 101 Integra Arbitrum y crea tu smart contract](https://github.com/jistro/Arbitrum-ETHMexico--Web3_101/assets/22781439/b63d34bb-05ac-49ce-8903-63c8b7df3bdd)
+![Web3 101 Integra Arbitrum y crea tu smart contract](src_README/BANNER.png)
 
 
 ## Que necesitas para empezar
