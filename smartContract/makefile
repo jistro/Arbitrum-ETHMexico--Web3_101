@@ -27,12 +27,12 @@ anvil :
 
 NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast
 
-ALBITRUM_TESTNET_ARGS := --rpc-url $(ALBITRUM_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ALBITRUM_API_KEY) -vvvv
-
+ALBITRUM_TESTNET_ARGS := --rpc-url $(ALBITRUM_RPC_URL) --private-key $(ALBITRUM_KEY) --broadcast --verify --etherscan-api-key $(ALBITRUM_API_KEY) -vvvv
 compile:
 	forge compile
 
 deployTest:
+	@source .env
 	@echo "--==Deploying test contracts in anvil local testnet==--"
 	@forge script script/DeploySystemLocal.s.sol:DeploySystemLocalScript $(NETWORK_ARGS)
 
