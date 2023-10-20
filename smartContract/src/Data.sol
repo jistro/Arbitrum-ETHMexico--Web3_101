@@ -70,14 +70,16 @@ contract Data is AccessControl {
         _;
     }
 
-    function grantAdminRole(address _adminAddress) public onlyAdmin {
+    function grantAdminRole(address _adminAddress) public onlyAdmin returns (bool, address) {
         _grantRole(ADMIN_ROLE, _adminAddress);
         emit Data__newAdmin(_adminAddress, block.timestamp);
+        return (true, _adminAddress);
     }
 
-    function grantDataProviderRole(address _dataProviderAddress) public onlyAdmin {
+    function grantDataProviderRole(address _dataProviderAddress) public onlyAdmin returns (bool, address) {
         _grantRole(DATA_PROVIDER_ROLE, _dataProviderAddress);
         emit Data__newDataProvider(_dataProviderAddress, block.timestamp);
+        return (true, _dataProviderAddress); 
     }
 
     function revokeAdminRole(address _adminAddress) public onlyAdmin {
@@ -99,7 +101,7 @@ contract Data is AccessControl {
         string memory lastName, 
         uint256 birthDate, 
         string memory birthPlace
-    ) public onlyDataProvider returns (uint256) {
+    ) public onlyAdmin returns (uint256) {
         numberID++;
         idUser[numberID] = idMetadata(firstName, lastName, birthDate, birthPlace);
         user[userAddress] = numberID;
@@ -107,7 +109,7 @@ contract Data is AccessControl {
         return numberID;
     }
 
-    function myID() public view onlyDataProvider returns (idMetadata memory, uint256) {
+    function myID() public view returns (idMetadata memory, uint256) {
         return (idUser[user[msg.sender]], user[msg.sender]);
     }
 

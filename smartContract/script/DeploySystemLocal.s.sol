@@ -20,6 +20,18 @@ contract DeploySystemLocalScript is Script {
             "Cosme",
             "Fulanito de Tal"
             );
+        service.newEmployee(
+            0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
+            "Jose",
+            "Perez",
+            2
+        );
+        service.newEmployee(
+            0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC,
+            "Juan",
+            "Gonzalez",
+            3
+        );
         (bool infoAdm, address admAdd)=data.grantAdminRole(address(service));
         (bool infodata, address dataAdd)=data.grantDataProviderRole(address(service));
         console2.log("Data address: ", address(data));

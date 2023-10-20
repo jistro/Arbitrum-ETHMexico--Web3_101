@@ -126,20 +126,23 @@ contract Service is AccessControl {
         employee[_employeeAddress].egressDate = block.timestamp;
     }
 
-    function reinstateEmployee(address _employeeAddress) public onlyAdmin {
+    function reinstateEmployee(address _employeeAddress, uint8 _role) public onlyAdmin {
         if (employee[_employeeAddress].idEmployee == 0) {
             revert Service__EmployeeNotExist();
         }
         if (employee[_employeeAddress].egressDate == 0) {
             revert Service__EmployeeIsStillActive();
         }
-        if (employee[_employeeAddress].role == 1) {
+        if (_role == 1) {
             _grantRole(ADMIN_ROLE, _employeeAddress);
-        } else if (employee[_employeeAddress].role == 2) {
+        } else if (_role == 2) {
             _grantRole(MANAGER_EMPLOYEE_ROLE, _employeeAddress);
-        } else if (employee[_employeeAddress].role == 3) {
+        } else if (_role == 3) {
             _grantRole(GENERAL_EMPLOYEE_ROLE, _employeeAddress);
+        } else {
+            revert Service__RoleNotValid();
         }
+        employee[_employeeAddress].role = _role;
         employee[_employeeAddress].egressDate = 0;
         employee[_employeeAddress].ingressDate = block.timestamp;
     }

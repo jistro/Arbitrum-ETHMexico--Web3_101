@@ -12,7 +12,7 @@ help:
 	@echo "  make anvil      run anvil"
 	@echo "  make compile    compile contracts"
 	@echo "  make deployTest deploy test contracts"
-	@echo "  make deployAlbitrum deploy test contracts in Albitrum goerli testnet"
+	@echo "  make deployAlbitrumTestnet deploy test contracts in Albitrum Sepolia testnet"
 
 all: clean remove install update build
 
@@ -34,9 +34,9 @@ compile:
 
 deployTest:
 	@echo "--==Deploying test contracts in anvil local testnet==--"
-	@forge script script/DeploySystem.s.sol:DeploySystemScript $(NETWORK_ARGS)
+	@forge script script/DeploySystemLocal.s.sol:DeploySystemLocalScript $(NETWORK_ARGS)
 
-deployAlbitrum:
+deployAlbitrumTestnet:
 	@echo "--==Deploying test contracts in Albitrum goerli testnet==--"
 	@forge script script/DeploySystem.s.sol:DeploySystemScript $(ALBITRUM_TESTNET_ARGS)
 
