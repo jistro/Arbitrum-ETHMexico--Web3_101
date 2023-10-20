@@ -9,7 +9,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { readContract} from '@wagmi/core'
+import { readContract } from '@wagmi/core'
 import { useAccount } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
@@ -43,7 +43,9 @@ const MyId: NextPage = () => {
 
     useEffect(() => {
         setIsClient(true);
-        findIdData();
+        if (isConnected && address) {
+            findIdData();
+        }
     }, [address, isConnected]);
 
     return (

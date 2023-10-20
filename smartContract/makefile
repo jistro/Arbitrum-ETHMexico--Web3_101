@@ -32,7 +32,6 @@ compile:
 	forge compile
 
 deployTest:
-	@source .env
 	@echo "--==Deploying test contracts in anvil local testnet==--"
 	@forge script script/DeploySystemLocal.s.sol:DeploySystemLocalScript $(NETWORK_ARGS)
 

@@ -168,7 +168,7 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && address) {
       getDataEmployee();
     }
   }, [isConnected, address]);
@@ -444,7 +444,7 @@ const Home: NextPage = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <strong>Employee don't exist</strong>
+                                    <strong>Employee don&apos;t exist</strong>
                                     <Button onClick={() => setMetadataFindEmployee(null)} size='sm' colorScheme='blue'>Clear</Button>
                                   </>
                                 )}
