@@ -1,29 +1,30 @@
-This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](https://github.com/rainbow-me/rainbowkit/tree/main/packages/create-rainbowkit).
+# Dapp de ejemplo
+En esta carpeta encontraras todo lo necesario para replicar el ejercicio.
 
-## Getting Started
+## Requisitos
+- [NodeJS](https://nodejs.org/es/)
+- [Foundry](https://book.getfoundry.sh/getting-started/installation)
 
-First, run the development server:
-
+## Instalación
+1. Clonar el repositorio
+2. Instalar dependencias
 ```bash
-npm run dev
+npm install
+```
+3. Iniciar Anvil
+```bash
+anvil
+```
+4. Iniciar Dapp
+```bash
+make local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about this stack, take a look at the following resources:
-
-- [RainbowKit Documentation](https://rainbowkit.com) - Learn how to customize your wallet connection flow.
-- [wagmi Documentation](https://wagmi.sh) - Learn how to interact with Ethereum.
-- [Next.js Documentation](https://nextjs.org/docs) - Learn how to build a Next.js application.
-
-You can check out [the RainbowKit GitHub repository](https://github.com/rainbow-me/rainbowkit) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## dependencias para el `.env`
+```env
+NEXT_PUBLIC_DATA_SC=0x5FbDB2315678afecb367f032d93F642f64180aa3
+NEXT_PUBLIC_SERVICE_SC=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+NEXT_PUBLIC_ENABLE_TESTNETS=true
+NEXT_PUBLIC_SERVICE_SC_TN=0xE5FBBB17a2c55D895dAB55Aad93370e25Ad34BEC
+NEXT_PUBLIC_DATA_SC_TN=0x6793D89720B3f420dfe8C62CCBaEE5CfB234933E
+```
