@@ -64,6 +64,16 @@ const MyId: NextPage = () => {
                 <Button colorScheme='blue' onClick={() => window.location.href = '/'}>Back</Button>
             </header>
             <main className={styles.main}>
+                <Card>
+                    <CardBody>
+                        Address of the id contract: <a
+                            href={`https://testnet.arbiscan.io/address/${addressData}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >{addressData}</a>
+                    </CardBody>
+                </Card>
+                <br />
                 {isClient && idData && isConnected && (
                     <Card>
                         <CardBody>

@@ -368,8 +368,21 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         {isClient && (
           <>
+            <Card>
+              <CardBody>
+                Address of the contract service: <a
+                  href={`https://testnet.arbiscan.io/address/${addressService}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >{addressService}</a>
+              </CardBody>
+            </Card>
             {isConnected && employee ? (
-              <div>
+              <div
+                style={{
+                  marginTop: '20px',
+                }}
+              >
                 {employee.firstName ? (
                   formatEmployeeData(employee)
                 ) : (
